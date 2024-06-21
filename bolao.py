@@ -1,6 +1,18 @@
 import streamlit as st
 import pandas as pd
 import csv
+import unicodedata
+import re
+
+def removerAcentosECaracteresEspeciais(palavra):
+
+    # Unicode normalize transforma um caracter em seu equivalente em latin.
+    nfkd = unicodedata.normalize('NFKD', palavra)
+    palavraSemAcento = u"".join([c for c in nfkd if not unicodedata.combining(c)])
+
+    # Usa expressão regular para retornar a palavra apenas com números, letras e espaço
+    return re.sub('[^a-zA-Z0-9 \\\]', '', palavraSemAcento )
+
 
 st.set_page_config(
     page_title="Copa América 2024",
@@ -26,10 +38,10 @@ with open("jogos.csv", "r", encoding='utf-8') as f:
         tabelaMestre.append({"participante": "Tabela Mestre",
                           "id": x[0],
                           "jogoM": x[1],
-                          "imgM": "./app/static/" + x[1] + ".png",
+                          "imgM": "./app/static/" + removerAcentosECaracteresEspeciais(x[1]) + ".png",
                           "placarM": 0,
                           "placarV": 0,
-                          "imgV": "./app/static/" + x[2] + ".png",
+                          "imgV": "./app/static/" + removerAcentosECaracteresEspeciais(x[2]) + ".png",
                           "jogoV": x[2],
                           "vencedor": "",
                           "grupo": x[3],
